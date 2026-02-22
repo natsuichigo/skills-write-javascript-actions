@@ -1,5 +1,13 @@
 const getJoke = require("./joke");
-const core = require("./@actions/core");
+let core;
+try {
+  core = require("@actions/core");
+} catch (e) {
+  core = {
+    setOutput: (name, value) => console.log(`output ${name}: ${value}`),
+    setFailed: (msg) => { console.error(msg); process.exitCode = 1; }
+  };
+}
 
 async function run() {
   const joke = await getJoke();
@@ -7,4 +15,4 @@ async function run() {
   core.setOutput("joke", joke);
 }
 
-run();
+run().catch(error => core.setFailed(error.message));
