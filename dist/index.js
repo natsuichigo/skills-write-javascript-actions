@@ -39548,7 +39548,19 @@ try {
   core = __nccwpck_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module '@actions/core'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 } catch (e) {
   core = {
-    setOutput: (name, value) => console.log(`output ${name}: ${value}`),
+    setOutput: (name, value) => {
+      const outputFile = process.env.GITHUB_OUTPUT;
+      if (outputFile) {
+        const fs = __nccwpck_require__(9896);
+        try {
+          fs.appendFileSync(outputFile, `${name}<<EOF\n${String(value).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A')}\nEOF\n`);
+        } catch (err) {
+          console.log(`output ${name}: ${value}`);
+        }
+      } else {
+        console.log(`output ${name}: ${value}`);
+      }
+    },
     setFailed: (msg) => { console.error(msg); process.exitCode = 1; }
   };
 }
