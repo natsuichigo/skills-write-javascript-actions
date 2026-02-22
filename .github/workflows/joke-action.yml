@@ -18,6 +18,8 @@ jobs:
       - name: Get Joke
         id: get-joke
         uses: ./
+        env:
+          NODE_NO_DEPRECATION: "1"
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v5
         with:
